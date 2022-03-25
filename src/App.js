@@ -6,22 +6,18 @@ import Board from './utils/Board'
 import BoardAI from './utils/BoardAI'
 import React, { useState, useEffect } from 'react'
 
-let initialEnemyBoard = [
-  [1,1,1,1,1,0,0,0,0,1],
-  [0,0,0,0,0,0,0,0,0,1],
-  [0,0,0,0,0,0,0,0,0,1],
-  [0,0,0,0,0,0,0,0,0,1],
-  [0,0,0,0,0,0,0,0,0,0],
-  [1,0,0,1,1,0,0,0,0,0],
-  [1,0,0,0,0,0,0,0,0,0],
-  [1,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0],
-  [1,1,1,1,0,0,0,0,0,0]
-]
-
-
-
-
+// let initialEnemyBoard = [
+//   [1,1,1,1,1,0,0,0,0,1],
+//   [0,0,0,0,0,0,0,0,0,1],
+//   [0,0,0,0,0,0,0,0,0,1],
+//   [0,0,0,0,0,0,0,0,0,1],
+//   [0,0,0,0,0,0,0,0,0,0],
+//   [1,0,0,1,1,0,0,0,0,0],
+//   [1,0,0,0,0,0,0,0,0,0],
+//   [1,0,0,0,0,0,0,0,0,0],
+//   [0,0,0,0,0,0,0,0,0,0],
+//   [1,1,1,1,0,0,0,0,0,0]
+// ]
 
 let initialPlayerBoard = [
   [0,0,0,0,1,1,1,1,0,0],
@@ -36,8 +32,36 @@ let initialPlayerBoard = [
   [0,0,0,0,0,0,0,0,0,0]
 ]
 
+let initialEnemyBoard = [
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0]
+]
+
+// let initialPlayerBoard = [
+//   [0,0,0,0,0,0,0,0,0,0],
+//   [0,0,0,0,0,0,0,0,0,0],
+//   [0,0,0,0,0,0,0,0,0,0],
+//   [0,0,0,0,0,0,0,0,0,0],
+//   [0,0,0,0,0,0,0,0,0,0],
+//   [0,0,0,0,0,0,0,0,0,0],
+//   [0,0,0,0,0,0,0,0,0,0],
+//   [0,0,0,0,0,0,0,0,0,0],
+//   [0,0,0,0,0,0,0,0,0,0],
+//   [0,0,0,0,0,0,0,0,0,0]
+// ]
+
 let enemyBoard = JSON.parse(JSON.stringify(initialEnemyBoard))
 let playerBoard = JSON.parse(JSON.stringify(initialPlayerBoard))
+
+let shipLengths = [5,4,4,3,2]
 
 // 0 = empty
 // 1 = part of a ship
@@ -46,11 +70,51 @@ let playerBoard = JSON.parse(JSON.stringify(initialPlayerBoard))
 
 function App() {
   const [ message, setMessage ] = useState('')
-  const [ hitCount, setHitCount] = useState(0)
-  const [ hitCountAI, setHitCountAI] = useState(0)
-  const [running, setRunning] = useState(true)
+  const [ hitCount, setHitCount ] = useState(0)
+  const [ hitCountAI, setHitCountAI ] = useState(0)
+  const [ running, setRunning ] = useState(false)
+  const [ win, setWin ] = useState(false)
+  const [ loose, setLoose ] = useState(false)
 
-  
+  const handleRestart = () => {
+    setHitCount(0)
+    setHitCountAI(0)
+    
+    
+    let enemyboard = document.getElementById('enemy-board')
+    for(let i = 0; i < enemyboard.children.length ; i++) {
+      enemyboard.children[i].style.backgroundColor = 'blue'
+    }
+    let playerboard = document.getElementById('player-board')
+    for(let i = 0; i < playerboard.children.length ; i++) {
+      playerboard.children[i].style.backgroundColor = 'blue'
+    }
+    
+    randomEnemyBoardGen()
+    console.log('enemyBoard', enemyBoard)
+    playerBoard = initialPlayerBoard
+    setRunning(true)
+    setWin(false)
+    setLoose(false)
+    //setMessage(null)
+  }
+
+  useEffect(() => {
+    putPlayerShips()
+  },[handleRestart])
+
+  const putPlayerShips = () => {
+    for(let j = 0; j < playerBoard.length ; j++) {
+      for(let i = 0; i < playerBoard[j].length; i++) {
+        if(playerBoard[j][i] == 1) {
+         let id = `aisquare-${i + 1}-${j + 1}`
+         let element = document.getElementById(id)
+         element.style.backgroundColor = 'grey'
+        }
+
+      }
+    }
+  }
 
   const fireTorpedoAI = () => {
     
@@ -112,58 +176,98 @@ function App() {
       } 
       console.log('end turn')
       console.log('hitCount',hitCount)
-      fireTorpedoAI()
+      setTimeout( () => {
+          fireTorpedoAI()
+        }, 900)
       if(hitCount  == 17) {
         setMessage('You won!')
+        setWin(true)
         setRunning(false)
-        setHitCount(0)
+
       }
     
       if(hitCountAI  == 17) {
         setMessage('You lost!')
+        setLoose(true)
         setRunning(false)
-        setHitCountAI(0)
+        
       }  
     }
 
   }
 
-  const handleRestart = () => {
-    setHitCount(0)
-    setHitCountAI(0)
-    
-    
-    let enemyboard = document.getElementById('enemy-board')
-    for(let i = 0; i < enemyboard.children.length ; i++) {
-      enemyboard.children[i].style.backgroundColor = 'blue'
+  const randomEnemyBoardGen = () => {
+    console.log('shipLengths length:' , shipLengths.length)
+    for(let k = 0; k < shipLengths.length ; k++) {
+      let randomX = Math.floor(Math.random() * 10)
+      let randomY = Math.floor(Math.random() * 10)
+      let randomDir = Math.floor(Math.random() * 2)  // 0 for X direction, and 1 for Y direction
+      if (randomDir == 0) {
+        if (randomX + shipLengths[k] > 9) {
+          randomX = Math.floor(Math.random() * 5)
+        } 
+        console.log(`shipLength: ${shipLengths[k]}, randomX: ${randomX}, randomY: ${randomY}, randomDir: ${randomDir}`)
+        for(let i = randomX; i < randomX + shipLengths[k] ; i++) {
+          enemyBoard[randomY][i] = 1
+        }
+      } else if (randomDir == 1) {
+        if (randomY + shipLengths[k] > 9) {
+          randomY = Math.floor(Math.random() * 5)
+        }
+        console.log(`shipLength: ${shipLengths[k]}, randomX: ${randomX}, randomY: ${randomY}, randomDir: ${randomDir}`)
+        for(let j = randomY; j < randomY + shipLengths[k] ; j++) {
+          enemyBoard[j][randomX] = 1
+        }
+      }
+
     }
-    let playerboard = document.getElementById('player-board')
-    for(let i = 0; i < playerboard.children.length ; i++) {
-      playerboard.children[i].style.backgroundColor = 'blue'
-    }
-    console.log(initialEnemyBoard)
-    enemyBoard = initialEnemyBoard
-    playerBoard = initialPlayerBoard
-    setRunning(true)
+    
   }
+  
 
   
 
   return (
-    <div className="row d-flex flex-row mt-5">
-      <div className='col-1 d-flex justify-content-center align-items-center'>{hitCount}</div>
-      <div className="col-10 d-flex flex-row">
-        <Board fireTorpedo={fireTorpedo}/>
-        <div className='w-25 d-flex flex-column justify-content-center align-items-center'>
-            {message}
-            <div className='restart-btn btn bg-danger' onClick={handleRestart}>restart</div>
+    <div className='main d-flex flex-column align-items-center mx-3'>
+      <div className='display-3'>React Battleship</div>
+      <div className="row w-100 d-flex flex-row mt-5">
+        <div className='col-1 d-flex flex-column'>
+          <div><div className='empty legend-square'></div> Empty</div>
+          <div><div className='ship legend-square'></div>  Part of ship  </div>
+          <div><div className='sunken legend-square'></div> Sunken part</div>
+          <div><div className='missed legend-square'></div> Missed shot</div>
         </div>
-        <BoardAI/>
-      </div>
-      <div className='col-1 d-flex justify-content-center align-items-center'>{hitCountAI}</div>
-        <div></div>
-        
+        <div className="col-10 d-flex flex-row">
+          <div className='d-flex flex-column align-items-center '>
+            <div className='d-flex flex-column justify-content-center align-items-center'>
+              <div className='display-5'>You</div>
+              <div className='count-div text-danger d-flex flex-column justify-content-center align-items-center border rounded'>score: {hitCount}</div>
+            </div>
+            <BoardAI/>
+          </div>
+          <div className='w-25 d-flex flex-column justify-content-center align-items-center'>
+              { running ? message  : ( win ? 'You won!':
+              <div className='instructions'>
+                Instructions: take shots until you sink all of your enemy's ships. The first player to make 18 correct shots wins!
 
+              </div>  )}
+              {<div className='restart-btn btn bg-danger' onClick={handleRestart}>{ running ? 'restart' : ( win ? 'restart' : 'start')}</div>}
+          </div>
+          <div className='d-flex flex-column align-items-center'>
+          <div className='d-flex flex-column justify-content-center align-items-center'>
+              <div className='display-5'>Computer AI</div>
+              <div className='count-div text-danger d-flex flex-column justify-content-center align-items-center border rounded'>score: {hitCountAI}</div>
+            </div>
+            
+            <Board fireTorpedo={fireTorpedo}/>
+          </div>
+        </div>
+        <div className='col-1' ></div>
+          
+
+      </div>
+      <div className='display-3'>{win ? 'Victory!' : ''}</div>
+      <div className='display-3'>{loose ? 'Defeat!' : ''}</div>
     </div>
   )
 }
