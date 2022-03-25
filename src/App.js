@@ -96,6 +96,7 @@ function App() {
     setRunning(true)
     setWin(false)
     setLoose(false)
+    setMessage('Take a shot on the Computer board')
     //setMessage(null)
   }
 
@@ -228,46 +229,68 @@ function App() {
   
 
   return (
-    <div className='main d-flex flex-column align-items-center mx-3'>
-      <div className='display-3'>React Battleship</div>
-      <div className="row w-100 d-flex flex-row mt-5">
-        <div className='col-1 d-flex flex-column'>
-          <div><div className='empty legend-square'></div> Empty</div>
-          <div><div className='ship legend-square'></div>  Part of ship  </div>
-          <div><div className='sunken legend-square'></div> Sunken part</div>
-          <div><div className='missed legend-square'></div> Missed shot</div>
-        </div>
-        <div className="col-10 d-flex flex-row">
-          <div className='d-flex flex-column align-items-center '>
-            <div className='d-flex flex-column justify-content-center align-items-center'>
-              <div className='display-5'>You</div>
-              <div className='count-div text-danger d-flex flex-column justify-content-center align-items-center border rounded'>score: {hitCount}</div>
+    <div className='main'>
+      <div className='col-8 d-flex flex-column align-items-center mx-3'>
+        <div className='display-3 mb-3'>React Battleship</div>
+        <div className='instructions'>
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                Instructions
+          </button>
+          <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <div class="modal-title display-5" id="staticBackdropLabel"><h1 className='text-center'>Instructions:</h1></div>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  
+                  <p className='text-center'> Take shots on the Computer AI board until you sink all of your enemy's ships. The first player to make 18 correct shots wins!
+                  </p>
+                  <div className='d-flex flex-column legend-div'>
+                    <div><div className='empty legend-square'></div> Empty</div>
+                    <div><div className='ship legend-square'></div>  Part of ship  </div>
+                    <div><div className='sunken legend-square'></div> Sunken part</div>
+                    <div><div className='missed legend-square'></div> Missed shot</div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary">Understood</button>
+                </div>
+              </div>
             </div>
-            <BoardAI/>
-          </div>
-          <div className='w-25 d-flex flex-column justify-content-center align-items-center'>
-              { running ? message  : ( win ? 'You won!':
-              <div className='instructions'>
-                Instructions: take shots until you sink all of your enemy's ships. The first player to make 18 correct shots wins!
-
-              </div>  )}
-              {<div className='restart-btn btn bg-danger' onClick={handleRestart}>{ running ? 'restart' : ( win ? 'restart' : 'start')}</div>}
-          </div>
-          <div className='d-flex flex-column align-items-center'>
-          <div className='d-flex flex-column justify-content-center align-items-center'>
-              <div className='display-5'>Computer AI</div>
-              <div className='count-div text-danger d-flex flex-column justify-content-center align-items-center border rounded'>score: {hitCountAI}</div>
-            </div>
-            
-            <Board fireTorpedo={fireTorpedo}/>
           </div>
         </div>
-        <div className='col-1' ></div>
+        <div className='restart-btn btn bg-danger' onClick={handleRestart}>{ running ? 'restart' : ( win ? 'restart' : 'start')}</div>
           
-
+          <div className="game-screen w-100 d-flex flex-row justify-content-between">
+            <div className='player-board d-flex flex-column align-items-center justify-content-between'>
+              <div className='d-flex flex-column justify-content-center align-items-center'>
+                <div className='name-div display-5'>You</div>
+                <div className='count-div text-danger d-flex flex-column justify-content-center align-items-center border rounded'>score: {hitCount}</div>
+              </div>
+              <BoardAI/>
+            </div>
+            <div className='info-div w-25 d-flex flex-column justify-content-center align-items-center'>
+              
+              <div className='info-message mt-3 text-center'>{ running ? message : ( win ? 'You won!': '' )}</div>
+              
+            </div>
+            <div className='enemy-board d-flex flex-column align-items-center justify-content-between'>
+              <div className='d-flex flex-column justify-content-center align-items-center'>
+                <div className='name-div display-5'>Computer</div>
+                <div className='count-div text-danger d-flex flex-column justify-content-center align-items-center border rounded'>score: {hitCountAI}</div>
+              </div>
+              
+              <Board fireTorpedo={fireTorpedo}/>
+            </div>
+          </div>
+        
+        <div className='display-3'>{win ? 'Victory!' : ''}</div>
+        <div className='display-3'>{loose ? 'Defeat!' : ''}</div>
+        
       </div>
-      <div className='display-3'>{win ? 'Victory!' : ''}</div>
-      <div className='display-3'>{loose ? 'Defeat!' : ''}</div>
     </div>
   )
 }
