@@ -12,4 +12,8 @@ y posteriormente:
 
 ### `npm start`
 
+You can also play it directly at:
+
+[https://battleship-javier-ramos.herokuapp.com/](https://battleship-javier-ramos.herokuapp.com/)
+
 
