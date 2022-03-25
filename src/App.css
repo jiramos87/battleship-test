@@ -14,7 +14,8 @@ body {
 }
 
 /* .game-screen {
-
+  position: relative;
+  bottom: 10% !important;
 } */
 
 .main {
@@ -41,8 +42,8 @@ body {
   cursor: crosshair;
 }
 
-.info-div {
-  height: 100%;
+button {
+  cursor: pointer;
 }
 
 .legend-div {
@@ -50,6 +51,7 @@ body {
   height: 40%;
   
 }
+
 
 .restart-btn {
   position:relative;
@@ -105,7 +107,15 @@ body {
   font-size: 20px;
 }
 
+.pos-display{
+  width: 7rem;
+  min-width: 5rem;
+  font-size: 3rem;
+}
 
+.pos-title {
+  font-size: 2rem;
+}
 
 .name-div {
   
@@ -114,6 +124,7 @@ body {
 
 .info-message {
   width: 100%;
+  font-size: 2rem;
 }
 
 @media only screen and (max-width: 500px) {
